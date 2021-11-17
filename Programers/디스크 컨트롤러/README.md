@@ -28,3 +28,10 @@ heapq를 사용해 정렬하고 싶었지만 그러지 못했고 list를 처리�
 # 다른 방법에서 궁금한점
 ## deque?
 양방향 큐
+## 코드 중에 이해가 안되는 부분
+    current_time = max(current_time + dur, arr + dur)
+    total_response_time += current_time - arr
+            
+뭐하는건가 했는데 나처럼 할게 없으면 기다리는게 아니라
+지금 하는지 아님 나중에 하는지(current_time + dur, arr + dur)
+둘 중 더 큰게 실제 기다리는 것과 동일하기 때문에 이렇게 진행
