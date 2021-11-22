@@ -1,6 +1,35 @@
+import datetime
+
+
 def solution(lines):
     answer = 0
-    print(lines)
+    time_line_list = []
+    for line in lines:
+        end_time = datetime.datetime.strptime(line.split(' ')[1], '%H:%M:%S.%f')
+        if '.' in line.split(' ')[2]:
+            duration_time_format = '%S.%fs'
+        else:
+            duration_time_format = '%Ss'
+        duration_time = datetime.datetime.strptime(line.split(' ')[2], duration_time_format)
+        start_time = end_time - datetime.timedelta(seconds=duration_time.second,
+                                                   microseconds=duration_time.microsecond - 1000)
+        time_line_list.append([start_time, end_time])
+    time_line_list.sort(key=lambda x: x[0])
+
+    for line_ in time_line_list:
+        for item in line_:
+            s = item
+            e = item + datetime.timedelta(seconds=1)
+
+            def check_is_in(i):
+                if s <= i[1] and i[0] < e:
+                    return True
+                else:
+                    return False
+
+            count = len(list(filter(check_is_in, time_line_list)))
+            if count > answer:
+                answer = count
     return answer
 
 
@@ -32,6 +61,8 @@ if __name__ == "__main__":
         2,
         7
     ]
-    for lines, result_ in zip(lines_all, result_all):
+    for index, (lines, result_) in enumerate(zip(lines_all, result_all)):
+        if index == 1:
+            print()
         answer_ = solution(lines)
         print(f'answer : {answer_} | result {result_}')
