@@ -1,46 +1,62 @@
-def solution(enroll, referral, seller, amount):
-    answer = [0 for x in range(len(enroll))]
+def solution(rows, columns, queries):
+    answer = []
+    solve_map = [[(i * columns + j + 1) for j in range(columns)] for i in range(rows)]
 
-    def get_parent_index(seller_name):
-        seller_index = enroll.index(seller_name)
-        if referral[seller_index] == '-':
-            return None
-        else:
-            return enroll.index(referral[seller_index])
+    # row : x  | col : y
+    def create_rotate_index_list(query):
+        min_row, max_row = min(query[0], query[2]) - 1, max(query[0], query[2]) - 1
+        min_col, max_col = min(query[1], query[3]) - 1, max(query[1], query[3]) - 1
 
-    def get_parent_route(seller_name):
-        parent_route = [enroll.index(seller_name)]
-        temp = seller_name
-        while get_parent_index(temp):
-            parent_index = get_parent_index(temp)
-            parent_route.append(parent_index)
-            temp = enroll[parent_index]
-        return parent_route
+        result_list = []
+        for i in range(min_col, max_col):  # 윗쪽
+            result_list.append([min_row, i])
 
-    for sell, count in zip(seller, amount):
-        parent_route = get_parent_route(sell)
-        proceeds = count * 100
-        for index, node in enumerate(parent_route):
-            if proceeds <= 0:
-                break
-            answer[node] += proceeds - proceeds // 10
-            proceeds = proceeds // 10
+        for i in range(min_row, max_row):  # 오른쪽
+            result_list.append([i, max_col])
 
+        for i in range(max_col, min_col, -1):  # 아랫쪽
+            result_list.append([max_row, i])
+
+        for i in range(max_row, min_row, -1):  # 왼쪽
+            result_list.append([i, min_col])
+
+        return result_list
+
+    for query in queries:
+        rotate_index_list = create_rotate_index_list(query)
+        value_list = [solve_map[i[0]][i[1]] for i in rotate_index_list]
+        answer.append(min(value_list))
+
+        value_list = [value_list[-1]] + value_list[:-1]
+        for index, value in zip(rotate_index_list, value_list):
+            solve_map[index[0]][index[1]] = value
     return answer
 
 
 if __name__ == "__main__":
-    # enroll = ["john", "mary", "edward", "sam", "emily", "jaimie", "tod", "young"]
-    # referral = ["-", "-", "mary", "edward", "mary", "mary", "jaimie", "edward"]
-    # seller = ["young", "john", "tod", "emily", "mary"]
-    # amount = [12, 4, 2, 5, 10]
-    # result_ = [360, 958, 108, 0, 450, 18, 180, 1080]
+    input_data = [
+        {
+            'rows': 6,
+            'columns': 6,
+            'queries': [[2, 2, 5, 4], [3, 3, 6, 6], [5, 1, 6, 3]],
+        },
+        {
+            'rows': 3,
+            'columns': 3,
+            'queries': [[1, 1, 2, 2], [1, 2, 2, 3], [2, 1, 3, 2], [2, 2, 3, 3]],
+        },
+        {
+            'rows': 100,
+            'columns': 97,
+            'queries': [[1, 1, 100, 97]],
+        },
 
-    enroll = ["john", "mary", "edward", "sam", "emily", "jaimie", "tod", "young"]
-    referral = ["-", "-", "mary", "edward", "mary", "mary", "jaimie", "edward"]
-    seller = ["sam", "emily", "jaimie", "edward"]
-    amount = [2, 3, 5, 4]
-    result_ = [0, 110, 378, 180, 270, 450, 0, 0]
-
-    answer_ = solution(enroll, referral, seller, amount)
-    print(f'answer : {answer_} | result {result_}')
+    ]
+    result_ = [
+        [8, 10, 25],
+        [1, 1, 5, 3],
+        [1]
+    ]
+    for item, result in zip(input_data, result_):
+        answer_ = solution(item['rows'], item['columns'], item['queries'])
+        print(f'answer : {answer_} | result {result}')
