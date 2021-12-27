@@ -1,62 +1,57 @@
-def solution(rows, columns, queries):
+from itertools import combinations
+
+
+def get_distance(start_node, end_node):
+    return abs(start_node[0] - end_node[0]) + abs(start_node[1] - end_node[1])
+
+
+def solution(places):
     answer = []
-    solve_map = [[(i * columns + j + 1) for j in range(columns)] for i in range(rows)]
+    for place in places:
+        candidate_list = []
+        for i, col in enumerate(place):
+            for j, data in enumerate(col):
+                if data == 'P':
+                    candidate_list.append([i, j])
 
-    # row : x  | col : y
-    def create_rotate_index_list(query):
-        min_row, max_row = min(query[0], query[2]) - 1, max(query[0], query[2]) - 1
-        min_col, max_col = min(query[1], query[3]) - 1, max(query[1], query[3]) - 1
-
-        result_list = []
-        for i in range(min_col, max_col):  # 윗쪽
-            result_list.append([min_row, i])
-
-        for i in range(min_row, max_row):  # 오른쪽
-            result_list.append([i, max_col])
-
-        for i in range(max_col, min_col, -1):  # 아랫쪽
-            result_list.append([max_row, i])
-
-        for i in range(max_row, min_row, -1):  # 왼쪽
-            result_list.append([i, min_col])
-
-        return result_list
-
-    for query in queries:
-        rotate_index_list = create_rotate_index_list(query)
-        value_list = [solve_map[i[0]][i[1]] for i in rotate_index_list]
-        answer.append(min(value_list))
-
-        value_list = [value_list[-1]] + value_list[:-1]
-        for index, value in zip(rotate_index_list, value_list):
-            solve_map[index[0]][index[1]] = value
+        for node in combinations(candidate_list, 2):
+            temp_answer = 1
+            distance = get_distance(node[0], node[1])
+            if distance == 1:
+                temp_answer = 0
+                break
+            elif get_distance(node[0], node[1]) <= 2:
+                if node[0][0] == node[1][0]:
+                    if place[node[0][0]][node[0][1] + 1] != 'X':
+                        temp_answer = 0
+                        break
+                elif node[0][1] == node[1][1]:
+                    if place[node[0][0] + 1][node[0][1]] != 'X':
+                        temp_answer = 0
+                        break
+                else:
+                    min_col = node[0][0] if node[0][0] < node[1][0] else node[1][0]
+                    min_row = node[0][1] if node[0][1] < node[1][1] else node[1][1]
+                    if place[min_col][min_row] == 'O' or \
+                            place[min_col][min_row + 1] == 'O' or \
+                            place[min_col + 1][min_row] == 'O' or \
+                            place[min_col + 1][min_row + 1] == 'O':
+                        temp_answer = 0
+                    break
+        answer.append(temp_answer)
     return answer
 
 
 if __name__ == "__main__":
-    input_data = [
-        {
-            'rows': 6,
-            'columns': 6,
-            'queries': [[2, 2, 5, 4], [3, 3, 6, 6], [5, 1, 6, 3]],
-        },
-        {
-            'rows': 3,
-            'columns': 3,
-            'queries': [[1, 1, 2, 2], [1, 2, 2, 3], [2, 1, 3, 2], [2, 2, 3, 3]],
-        },
-        {
-            'rows': 100,
-            'columns': 97,
-            'queries': [[1, 1, 100, 97]],
-        },
-
+    places = [
+        ["POOOP", "OXXOX", "OPXPX", "OOXOX", "POXXP"],
+        ["POOPX", "OXPXP", "PXXXO", "OXXXO", "OOOPP"],
+        ["PXOPX", "OXOXP", "OXPOX", "OXXOP", "PXPOX"],
+        ["OOOXX", "XOOOX", "OOOXX", "OXOOX", "OOOOO"],
+        ["PXPXP", "XPXPX", "PXPXP", "XPXPX", "PXPXP"]
     ]
-    result_ = [
-        [8, 10, 25],
-        [1, 1, 5, 3],
-        [1]
-    ]
-    for item, result in zip(input_data, result_):
-        answer_ = solution(item['rows'], item['columns'], item['queries'])
-        print(f'answer : {answer_} | result {result}')
+    result = [1, 0, 1, 1, 1]
+    places = [["PXOOO", "OOOOO", "PXOOO", "OOOOO", "OOOPO"]]
+    result = [0]
+    answer_ = solution(places)
+    print(f'answer : {answer_} | result {result}')
