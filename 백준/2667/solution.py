@@ -40,6 +40,7 @@ def solution(home_map):
             if home_map[i][j] == '0' or visited_map[i][j] == 1:
                 continue
             possible_node_list = get_possible_node_list(i, j)
+
             room_count = 0
             while possible_node_list:
                 visit_node = possible_node_list.pop(0)
@@ -51,10 +52,9 @@ def solution(home_map):
                 possible_node_list += get_possible_node_list(visit_node[0], visit_node[1])
             if room_count != 0:
                 answer.append(room_count)
-    print()
     answer.sort()
     result = [len(answer)]
-    return answer.sort()
+    return answer
 
 
 if __name__ == "__main__":
