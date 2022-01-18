@@ -33,6 +33,57 @@ def solution(info, query):
     return answer
 
 
+def solution_2(info, query):
+    answer = []
+
+    data_set = {}
+    """
+    data_set = {
+    'java' : { # info_d[0]
+        'front' :{ # info_d[1]
+            'senior' : { # info_d[2]
+                'chicken' : [10, 20] # info_d[3]
+                }
+            }
+        }
+    }
+    data_set[info_d[0]][info_d[1]][info_d[2]][info_d[3]] = []
+    """
+    data = {}
+    for a in ['cpp', 'java', 'python', '-']:
+        for b in ['backend', 'frontend', '-']:
+            for c in ['junior', 'senior', '-']:
+                for d in ['chicken', 'pizza', '-']:
+                    data.setdefault((a, b, c, d), list())
+    for i in info:
+        i = i.split()
+        for a in [i[0], '-']:
+            for b in [i[1], '-']:
+                for c in [i[2], '-']:
+                    for d in [i[3], '-']:
+                        data[(a, b, c, d)].append(int(i[4]))
+
+    for k in data:
+        data[k].sort()
+
+    for query_item in query:
+        q = query_item.replace(' and ', ' ').split(' ')
+
+        pool = data[tuple(q[:-1])]
+        find = int(q[4])
+        l = 0
+        r = len(pool)
+        mid = 0
+        while l < r:
+            mid = (r + l) // 2
+            if pool[mid] >= find:
+                r = mid
+            else:
+                l = mid + 1
+        answer.append(len(pool) - l)
+    return answer
+
+
 if __name__ == "__main__":
     info = ["java backend junior pizza 150",
             "python frontend senior chicken 210",
@@ -48,5 +99,5 @@ if __name__ == "__main__":
              "- and - and - and - 150"]
     result_ = [1, 1, 1, 1, 2, 4]
 
-    answer_ = solution(info, query)
+    answer_ = solution_2(info, query)
     print(f'answer : {answer_} | result {result_}')
