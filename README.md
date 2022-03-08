@@ -1,9 +1,9 @@
 # Algoritm_Study
-백준 문제 풀이 저장
 
+알고리즘 문제 풀이 저장
 
-## 1. Solving Problem
-- \#1260 : DFS와 BFS
+문제 푸는 사이즈
 
-
-## 2. Solved Problem
+## 1. Programmers
+## 2. Leetcode
+## 3. 백준
