@@ -4,6 +4,7 @@ from heapq import heapify, heappop, heappush
 
 class Solution:
     def findCheapestPrice(self, n: int, flights: List[List[int]], src: int, dst: int, k: int) -> int:
+        # Todo 진행 중 03.08 23:31
         answer = 0
         graph = {}
         for item in flights:
@@ -19,7 +20,6 @@ class Solution:
         heappush(queue, [src, nodes[src]])  # [current_destination, [current_distance, node_count]
 
         while queue:
-
             current_destination, current_node = heappop(queue)
 
             if current_node[1] == k + 1:  # node count >= k
